@@ -83,7 +83,7 @@ def exec(url):
     load_dotenv()
     token = __auth()
     if token != "":
-        id = __get_id_from_url(example_url)
+        id = __get_id_from_url(url)
         track_json = __get_track_data(id, token)
         track_artist = track_json["artists"][0]["name"]
         track_title = track_json["name"]
