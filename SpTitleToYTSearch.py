@@ -25,16 +25,16 @@ from urllib.parse import quote
 
 example_url = "https://open.spotify.com/track/7byGwLkiIzJdHOZKZMS8nd?si=aa14b663692146cd"
 
-search_url = "https://www.youtube.com/results?search_query={}"
+__search_url = "https://www.youtube.com/results?search_query={}"
 
-api_tracks_url = "https://api.spotify.com/v1/tracks/{}"
-api_auth_url = "https://accounts.spotify.com/api/token"
+__api_tracks_url = "https://api.spotify.com/v1/tracks/{}"
+__api_auth_url = "https://accounts.spotify.com/api/token"
 
-tracks_headers = {"Content-Type": "application/json",
+__tracks_headers = {"Content-Type": "application/json",
                   "Authorization": "Bearer {}"}
-auth_headers = {"Authorization": "Basic {}"}
+__auth_headers = {"Authorization": "Basic {}"}
 
-auth_data = {"grant_type" : "client_credentials"}
+__auth_data = {"grant_type" : "client_credentials"}
 
 def match_sp_url(str):
     pattern = r"https:\/\/open\.spotify\.com\/track\/[\w?=\-&]+"
@@ -47,7 +47,7 @@ def match_sp_url(str):
 
 
 def __get_filled_auth_header():
-    header = auth_headers
+    header = __auth_headers
     auth_data = f"{os.getenv('SPOTIFY_CLIENT')}:{os.getenv('SPOTIFY_SECRET')}"
     auth_bytes = auth_data.encode('ascii')
     b64_bytes = base64.b64encode(auth_bytes)
@@ -56,13 +56,13 @@ def __get_filled_auth_header():
     return header
 
 def __get_filled_tracks_header(token):
-    header = tracks_headers
+    header = __tracks_headers
     header["Authorization"] = header["Authorization"].format(token)
 
     return header
 
 def __auth():
-    response = requests.post(api_auth_url, headers=__get_filled_auth_header(), data=auth_data)
+    response = requests.post(__api_auth_url, headers=__get_filled_auth_header(), data=__auth_data)
 
     if response.status_code == 200:
         return response.json()["access_token"]
@@ -73,11 +73,11 @@ def __get_id_from_url(url):
     return url.split('/')[-1].split('&')[0]
 
 def __get_track_data(id, token):
-    return requests.get(api_tracks_url.format(id), headers=__get_filled_tracks_header(token)).json()
+    return requests.get(__api_tracks_url.format(id), headers=__get_filled_tracks_header(token)).json()
 
 def __get_track_search_url(artist, title):
     encoded_text = quote(f"{artist} {title}")
-    return search_url.format(encoded_text)
+    return __search_url.format(encoded_text)
 
 def exec(url):
     load_dotenv()
