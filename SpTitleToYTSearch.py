@@ -19,6 +19,7 @@
 import requests
 import base64
 import os
+import re
 from dotenv import load_dotenv
 from urllib.parse import quote
 
@@ -34,6 +35,16 @@ tracks_headers = {"Content-Type": "application/json",
 auth_headers = {"Authorization": "Basic {}"}
 
 auth_data = {"grant_type" : "client_credentials"}
+
+def match_sp_url(str):
+    pattern = r"https:\/\/open\.spotify\.com\/track\/[\w?=\-&]+"
+    result = re.search(pattern, str)
+
+    if result is not None:
+        return result.group()
+    else:
+        return ""
+
 
 def get_filled_auth_header():
     header = auth_headers
@@ -59,7 +70,7 @@ def auth():
         return ""
 
 def get_id_from_url(url):
-    return url.split('/')[-1]
+    return url.split('/')[-1].split('&')[0]
 
 def get_track_data(id, token):
     return requests.get(api_tracks_url.format(id), headers=get_filled_tracks_header(token)).json()
