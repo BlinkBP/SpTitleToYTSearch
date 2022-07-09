@@ -46,7 +46,7 @@ def match_sp_url(str):
         return ""
 
 
-def get_filled_auth_header():
+def __get_filled_auth_header():
     header = auth_headers
     auth_data = f"{os.getenv('SPOTIFY_CLIENT')}:{os.getenv('SPOTIFY_SECRET')}"
     auth_bytes = auth_data.encode('ascii')
@@ -55,40 +55,40 @@ def get_filled_auth_header():
 
     return header
 
-def get_filled_tracks_header(token):
+def __get_filled_tracks_header(token):
     header = tracks_headers
     header["Authorization"] = header["Authorization"].format(token)
 
     return header
 
-def auth():
-    response = requests.post(api_auth_url, headers=get_filled_auth_header(), data=auth_data)
+def __auth():
+    response = requests.post(api_auth_url, headers=__get_filled_auth_header(), data=auth_data)
 
     if response.status_code == 200:
         return response.json()["access_token"]
     else:
         return ""
 
-def get_id_from_url(url):
+def __get_id_from_url(url):
     return url.split('/')[-1].split('&')[0]
 
-def get_track_data(id, token):
-    return requests.get(api_tracks_url.format(id), headers=get_filled_tracks_header(token)).json()
+def __get_track_data(id, token):
+    return requests.get(api_tracks_url.format(id), headers=__get_filled_tracks_header(token)).json()
 
-def get_track_search_url(artist, title):
+def __get_track_search_url(artist, title):
     encoded_text = quote(f"{artist} {title}")
     return search_url.format(encoded_text)
 
 def exec(url):
     load_dotenv()
-    token = auth()
+    token = __auth()
     if token != "":
-        id = get_id_from_url(example_url)
-        track_json = get_track_data(id, token)
+        id = __get_id_from_url(example_url)
+        track_json = __get_track_data(id, token)
         track_artist = track_json["artists"][0]["name"]
         track_title = track_json["name"]
 
-        return get_track_search_url(track_artist, track_title)
+        return __get_track_search_url(track_artist, track_title)
     else:
         return ""
 
