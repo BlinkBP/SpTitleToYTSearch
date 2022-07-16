@@ -85,21 +85,19 @@ def __get_track_search_url(artist, title):
 def exec(url):
     retries = 0
     load_dotenv()
-    token = __auth()
-    if token != "":
-        id = __get_id_from_url(url)
-        while retries < __max_retries:
+    while retries < __max_retries:
+        token = __auth()
+        if token != "":
+            id = __get_id_from_url(url)
             track_json = __get_track_data(id, token)
             if ("artists" in track_json) and ("name" in track_json):
                 track_artist = track_json["artists"][0]["name"]
                 track_title = track_json["name"]
 
                 return __get_track_search_url(track_artist, track_title)
-            retries += 1
-            time.sleep(0.5)
-        return ""
-    else:
-        return ""
+        retries += 1
+        time.sleep(0.5)
+    return ""
 
 if __name__ == "__main__":
-    print(exec("https://open.spotify.com/track/29YNMIIX9BEGaqylUK9JnA?si=01d3b7cb468f4d64"))
+    print(exec("example_url"))
