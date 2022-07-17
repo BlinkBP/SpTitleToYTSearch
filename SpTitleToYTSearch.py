@@ -32,8 +32,11 @@ __api_tracks_url = "https://api.spotify.com/v1/tracks/{}"
 __api_auth_url = "https://accounts.spotify.com/api/token"
 
 __tracks_headers = {"Content-Type": "application/json",
-                  "Authorization": "Bearer {}"}
-__auth_headers = {"Authorization": "Basic {}"}
+                    "Authorization": "Bearer {}"}
+__auth_headers   = {"Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": "Basic {}",
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"}
 
 __auth_data = {"grant_type" : "client_credentials"}
 
@@ -50,7 +53,7 @@ def match_sp_url(str):
 
 
 def __get_filled_auth_header():
-    header = __auth_headers
+    header = __auth_headers.copy()
     auth_data = f"{os.getenv('SPOTIFY_CLIENT')}:{os.getenv('SPOTIFY_SECRET')}"
     auth_bytes = auth_data.encode('ascii')
     b64_bytes = base64.b64encode(auth_bytes)
@@ -59,7 +62,7 @@ def __get_filled_auth_header():
     return header
 
 def __get_filled_tracks_header(token):
-    header = __tracks_headers
+    header = __tracks_headers.copy()
     header["Authorization"] = header["Authorization"].format(token)
 
     return header
@@ -100,4 +103,4 @@ def exec(url):
     return ""
 
 if __name__ == "__main__":
-    print(exec("example_url"))
+    print(exec(example_url))
